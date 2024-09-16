@@ -15,7 +15,7 @@ with open('../data/chessData.csv', mode ='r') as file:
     next(csvFile)
     for row in csvFile:
         if i == 10: break
-        if counter == 100000:
+        if counter == 500000:
             writeToFile()
             i += 1
             counter = 0
