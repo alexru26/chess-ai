@@ -5,7 +5,6 @@ from piece import *
 import chess
 import numpy as np
 from keras import models
-from book import Book
 
 class AI:
 
@@ -13,18 +12,9 @@ class AI:
         self.engine = engine
         self.depth = depth
         self.model = models.load_model('../models/ai.keras')
-        self.book = Book()
         self.color = 'black'
         self.game_moves = []
         self.explored = 0
-
-    # ----
-    # BOOK
-    # ----
-
-    def book_move(self):
-        move = self.book.next_move(self.game_moves, weighted=True)
-        return move
 
     # -------
     # MINIMAX
@@ -281,14 +271,6 @@ class AI:
         # add last move
         last_move = main_board.last_move
         self.game_moves.append(last_move)
-
-        # book engine
-        if self.engine == 'book':
-            move = self.book_move()
-
-            # no more book moves ?
-            if move is None:
-                self.engine = 'minimax'
 
         # minimax engine
         if self.engine == 'minimax':
