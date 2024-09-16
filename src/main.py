@@ -85,27 +85,26 @@ class Main:
                             # >>>>> AI >>>>>
                             # --------------
 
-                            if game.gamemode == 'ai':
-                                # update
-                                game.unselect_piece()
-                                game.show_pieces(screen)
-                                pygame.display.update()
-                                # optimal move
-                                move = ai.eval(board)
-                                initial = move.initial
-                                final = move.final
-                                # piece
-                                piece = board.squares[initial.row][initial.col].piece
-                                # capture
-                                captured = board.squares[final.row][final.col].has_piece()
-                                # move
-                                board.move(piece, move)
-                                game.sound_effect(captured)
-                                # draw
-                                game.show_bg(screen)
-                                game.show_pieces(screen)
-                                # next -> AI
-                                game.next_turn()
+                            # update
+                            game.unselect_piece()
+                            game.show_pieces(screen)
+                            pygame.display.update()
+                            # optimal move
+                            move = ai.eval(board)
+                            initial = move.initial
+                            final = move.final
+                            # piece
+                            piece = board.squares[initial.row][initial.col].piece
+                            # capture
+                            captured = board.squares[final.row][final.col].has_piece()
+                            # move
+                            board.move(piece, move)
+                            game.sound_effect(captured)
+                            # draw
+                            game.show_bg(screen)
+                            game.show_pieces(screen)
+                            # next -> AI
+                            game.next_turn()
                     
                     game.unselect_piece()
                     dragger.undrag_piece()

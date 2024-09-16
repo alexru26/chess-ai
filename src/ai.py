@@ -2,17 +2,15 @@ import copy, math, random
 
 from const import *
 from piece import *
-import chess
 import numpy as np
 from keras import models
 
 class AI:
 
-    def __init__(self, depth=3):
+    def __init__(self, depth=1):
         self.depth = depth
         self.model = models.load_model('../models/ai.keras')
         self.color = 'black'
-        self.game_moves = []
         self.explored = 0
 
     def split_boards(self, board):
@@ -81,6 +79,19 @@ class AI:
         
         return moves
 
+    def order_moves(self, moves, board):
+        """Order moves to prioritize captures and checks."""
+        ordered_moves = []
+        for move in moves:
+            if board.squares[move.initial.row][move.initial.col].piece is None: continue
+            target_square = board.squares[move.final.row][move.final.col]
+            if target_square.has_piece():
+                ordered_moves.insert(0, move)
+            else:
+                ordered_moves.append(move)  # Normal moves
+
+        return ordered_moves
+
     def minimax(self, board, depth, maximizing, alpha, beta):
         if depth == 0:
             return self.static_eval(board), None # eval, move
@@ -88,7 +99,7 @@ class AI:
         # white
         if maximizing:
             max_eval = -math.inf
-            moves = self.get_moves(board, 'white')
+            moves = self.order_moves(self.get_moves(board, 'white'), board)
             for move in moves:
                 self.explored += 1
                 piece = board.squares[move.initial.row][move.initial.col].piece
@@ -111,7 +122,7 @@ class AI:
         # black
         elif not maximizing:
             min_eval = math.inf
-            moves = self.get_moves(board, 'black')
+            moves = self.order_moves(self.get_moves(board, 'black'), board)
             for move in moves:
                 self.explored += 1
                 piece = board.squares[move.initial.row][move.initial.col].piece
@@ -135,22 +146,13 @@ class AI:
     def eval(self, main_board):
         self.explored = 0
 
-        # add last move
-        last_move = main_board.last_move
-        self.game_moves.append(last_move)
-
         # printing
         print('\nFinding best move...')
 
         # minimax initial call
-        eval, move = self.minimax(main_board, self.depth, False, -math.inf, math.inf) # eval, move
+        eval, move = self.minimax(main_board, self.depth, False, -math.inf, math.inf)
 
         # printing
-        print('\n- Initial eval:',self.static_eval(main_board))
-        print('- Final eval:', eval)
         print('- Boards explored', self.explored)
-            
-        # append
-        self.game_moves.append(move)
-        
+
         return move
