@@ -1,164 +1,64 @@
-import sys, pygame
+import chess
+from chessboard import display
+from ai import AI
+import random
 
-from const import *
-from game import Game
-from move import Move
-from square import Square
+# Initialize the chess board
+board = chess.Board()
+display_board = display.start()
 
-class Main:
+# Randomly decide if the player is white or black
+player_is_white = random.choice([True, False])
 
-    def __init__(self):
-        pygame.init()
-        self.screen = pygame.display.set_mode( (WIDTH, HEIGHT) )
-        pygame.display.set_caption('Chess')
-        self.game = Game()
+ai = AI(chess.BLACK if player_is_white else chess.WHITE)
 
-    def mainloop(self):
+def player_move():
+    move_made = False
+    while not move_made:
+        try:
+            user_move = input("Enter your move in UCI format (e.g., e2e4): ")
+            move = chess.Move.from_uci(user_move)
+            if move in board.legal_moves:
+                board.push(move)
+                move_made = True
+            else:
+                print("Illegal move. Try again.")
+        except ValueError:
+            print("Invalid input. Please use UCI format (e.g., e2e4).")
 
-        screen = self.screen
-        game = self.game
-        board = self.game.board
-        ai = self.game.ai
-        dragger = self.game.dragger
+def computer_move():
+    move = ai.eval(board)
+    board.push(move)
 
-        while True:
-            
-            if not game.selected_piece:
-                game.show_bg(screen)
-                game.show_pieces(screen)
+def main():
+    # Inform the player of their color
+    if player_is_white:
+        print("You are playing as White!")
+    else:
+        print("You are playing as Black!")
 
-            game.show_hover(screen)
+    while not board.is_game_over():
+        display.check_for_quit()
+        if (board.turn == chess.WHITE and player_is_white) or (board.turn == chess.BLACK and not player_is_white):
+            player_move()
+            display.update(board.fen(), display_board)
+        else:
+            computer_move()
+            display.update(board.fen(), display_board)
 
-            if dragger.dragging:
-                dragger.update_blit(screen)
+    print("Game Over!")
+    if board.is_checkmate():
+        print("Checkmate!")
+    elif board.is_stalemate():
+        print("Stalemate!")
+    elif board.is_insufficient_material():
+        print("Draw by insufficient material.")
+    elif board.is_seventyfive_moves():
+        print("Draw by seventy-five moves rule.")
+    elif board.is_fivefold_repetition():
+        print("Draw by fivefold repetition.")
+    elif board.is_variant_draw():
+        print("Draw by variant rule.")
 
-            for event in pygame.event.get():
-                
-                # mouse click
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    dragger.update_mouse(event.pos)
-
-                    pos = event.pos
-                    clicked_row = dragger.mouseY // SQSIZE
-                    clicked_col = dragger.mouseX // SQSIZE
-
-                    if board.squares[clicked_row][clicked_col].has_piece():
-                        piece = board.squares[clicked_row][clicked_col].piece
-                        # valid piece ?
-                        if piece.color == game.next_player:
-                            game.select_piece(piece)
-                            board.calc_moves(piece, clicked_row, clicked_col)
-                            dragger.drag_piece(piece)
-                            dragger.save_initial(pos)
-                            # show
-                            game.show_bg(screen)
-                            game.show_pieces(screen)
-
-                # mouse release
-                elif event.type == pygame.MOUSEBUTTONUP:
-                    if dragger.dragging:
-                        dragger.update_mouse(event.pos)
-
-                        # released pos
-                        released_row = dragger.mouseY // SQSIZE
-                        released_col = dragger.mouseX // SQSIZE
-
-                        # new move object
-                        initial = Square(dragger.initial_row, dragger.initial_col)
-                        final = Square(released_row, released_col)
-                        move = Move(initial, final)
-                        
-                        # valid move -> move ?
-                        if board.valid_move(dragger.piece, move):
-                            # capture
-                            captured = board.squares[released_row][released_col].has_piece()
-                            # move
-                            board.move(dragger.piece, move)
-                            game.sound_effect(captured)
-                            # draw
-                            game.show_bg(screen)
-                            game.show_pieces(screen)
-                            # next -> AI
-                            game.next_turn()
-                            
-                            # --------------
-                            # >>>>> AI >>>>>
-                            # --------------
-
-                            # update
-                            game.unselect_piece()
-                            game.show_pieces(screen)
-                            pygame.display.update()
-                            # optimal move
-                            move = ai.eval(board)
-                            initial = move.initial
-                            final = move.final
-                            # piece
-                            piece = board.squares[initial.row][initial.col].piece
-                            # capture
-                            captured = board.squares[final.row][final.col].has_piece()
-                            # move
-                            board.move(piece, move)
-                            game.sound_effect(captured)
-                            # draw
-                            game.show_bg(screen)
-                            game.show_pieces(screen)
-                            # next -> AI
-                            game.next_turn()
-                    
-                    game.unselect_piece()
-                    dragger.undrag_piece()
-
-                # mouse motion
-                elif event.type == pygame.MOUSEMOTION:
-                    pos = event.pos
-                    motion_row = pos[1] // SQSIZE
-                    motion_col = pos[0] // SQSIZE
-
-                    game.set_hover(motion_row, motion_col)
-
-                    if dragger.dragging:
-                        dragger.update_mouse(event.pos)
-                        # show
-                        game.show_bg(screen)
-                        game.show_pieces(screen)
-                        game.show_hover(screen)
-                        dragger.update_blit(screen)
-
-                # key press
-                elif event.type == pygame.KEYDOWN:
-                    
-                    # gamemode
-                    # if event.key == pygame.K_a:
-                    #     game.change_gamemode()
-                    
-                    # depth
-                    if event.key == pygame.K_3:
-                        ai.depth = 3
-
-                    if event.key == pygame.K_4:
-                        ai.depth = 4
-
-                    # theme
-                    if event.key == pygame.K_t:
-                        game.change_theme()
-                    
-                    # reset
-                    if event.key == pygame.K_r:
-                        game.reset()
-
-                        screen = self.screen
-                        game = self.game
-                        board = self.game.board
-                        ai = self.game.ai
-                        dragger = self.game.dragger
-
-                elif event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-            pygame.display.update()
-    
-if __name__ == '__main__':
-    m = Main()
-    m.mainloop()
+if __name__ == "__main__":
+    main()
