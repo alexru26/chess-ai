@@ -10,7 +10,7 @@ display_board = display.start()
 # Randomly decide if the player is white or black
 player_is_white = random.choice([True, False])
 
-ai = AI(chess.BLACK if player_is_white else chess.WHITE)
+ai = AI()
 
 def player_move():
     move_made = False
@@ -27,8 +27,8 @@ def player_move():
             print("Invalid input. Please use UCI format (e.g., e2e4).")
 
 def computer_move():
-    move = ai.eval(board)
-    board.push(move)
+    move = ai.predict(board)
+    board.push_uci(move)
 
 def main():
     # Inform the player of their color
