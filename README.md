@@ -1,11 +1,12 @@
 # Machine Learning Project 01: Chess AI
-Run main.py to play against the AI
+This is an AI that plays chess alright. Run main.py to play against the AI. 
 
 ## Resources Used
 - ChatGPT
 - https://github.com/Skripkon/chess-engine
 - https://www.youtube.com/watch?v=ffzvhe97J4Q
 - Data from https://database.nikonoel.fr/
+  - Data is not included in the repository because it is 3.2 GB
 
 ## How it works
 - Model is trained on 27728 games and 2276758 different positions
@@ -43,7 +44,7 @@ Run main.py to play against the AI
 ## Improvements
 - Load more files and more games
   - AI would be trained on more scenarios and thus would be more prepared
-    - Out of the 
+    - A very small amount of the 3.2 GB has been used to train the model
 - Make AI more complicated
   - Change architecture of AI
     - It's possible the AI is limited by its basic architecture
