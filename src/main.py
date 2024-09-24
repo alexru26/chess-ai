@@ -1,7 +1,9 @@
+import random
+
 import chess
 from chessboard import display
+
 from ai import AI
-import random
 
 # MOSTLY EVERYTHING HERE WAS WRITTEN WITH CHATGPT
 

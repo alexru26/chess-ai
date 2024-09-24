@@ -1,11 +1,10 @@
-import math
-import numpy as np
-import chess
-import hashlib
 import json
-from keras import models
 import random
-import time
+
+import chess
+import numpy as np
+from keras import models
+
 
 class AI:
     """AI class that gives optimal move"""
