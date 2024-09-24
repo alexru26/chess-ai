@@ -38,10 +38,11 @@ This is an AI that plays chess alright. Run main.py to play against the AI.
     -  Magnus likes to troll
 - Final attempt: Lichess database predicter
   -  More well-rounded data
-  -  Players are worse than Magnus, but still good (2000+ on lichess)
+  -  Players are worse than Magnus, but they are still good (2000+ on lichess)
   -  Also gets worse throughout the game but not as bad as Magnus predicter
+  -  Resorts to a random legal move if predicted move is not legal
 
-## Improvements
+## Further Improvements
 - Load more files and more games
   - AI would be trained on more scenarios and thus would be more prepared
     - A very small amount of the 3.2 GB has been used to train the model
