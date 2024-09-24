@@ -3,9 +3,11 @@ from chessboard import display
 from ai import AI
 import random
 
+# MOSTLY EVERYTHING HERE WAS WRITTEN WITH CHATGPT
+
 # Initialize the chess board
 board = chess.Board()
-display_board = display.start()
+display_board = display.start() # I did write this line myself, initializes display
 
 # Randomly decide if the player is white or black
 player_is_white = random.choice([True, False])
@@ -13,6 +15,7 @@ player_is_white = random.choice([True, False])
 ai = AI()
 
 def player_move():
+    """Player move prompt"""
     move_made = False
     while not move_made:
         try:
@@ -27,10 +30,13 @@ def player_move():
             print("Invalid input. Please use UCI format (e.g., e2e4).")
 
 def computer_move():
+    """Computer move prompt"""
     move = ai.predict(board)
+    print(move)
     board.push_uci(move)
 
 def main():
+    """Main function of game"""
     # Inform the player of their color
     if player_is_white:
         print("You are playing as White!")
@@ -41,10 +47,10 @@ def main():
         display.check_for_quit()
         if (board.turn == chess.WHITE and player_is_white) or (board.turn == chess.BLACK and not player_is_white):
             player_move()
-            display.update(board.fen(), display_board)
+            display.update(board.fen(), display_board) # wrote this myself
         else:
             computer_move()
-            display.update(board.fen(), display_board)
+            display.update(board.fen(), display_board) # wrote this myself
 
     print("Game Over!")
     if board.is_checkmate():
@@ -61,4 +67,5 @@ def main():
         print("Draw by variant rule.")
 
 if __name__ == "__main__":
+    """Main entry point"""
     main()
