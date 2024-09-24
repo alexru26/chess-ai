@@ -1,5 +1,18 @@
 # Machine Learning Project 01: Chess AI
-This is an AI that plays chess alright. Run main.py to play against the AI. 
+This is an AI that plays chess alright. 
+
+## How to run
+Make sure you have the necessary packages.
+
+```
+pip install pandas
+pip install tensorflow
+pip install keras
+pip install chess
+pip install chess-board
+```
+
+Run main.py to play against the AI. 
 
 ## Resources Used
 - ChatGPT
