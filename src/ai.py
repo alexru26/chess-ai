@@ -18,16 +18,6 @@ class AI:
         with open('dict.json', 'r') as f:
             self.int_to_move = json.load(f)
 
-    def space_to_int(self, space):
-        """
-        Taken from here: https://www.youtube.com/watch?v=ffzvhe97J4Q&ab_channel=DigitalSecrets
-        :param space: the chess space
-        :return: row and column index
-        """
-        row_val = {'a': 0, 'b': 1, 'c': 2, 'd': 3, 'e': 4, 'f': 5, 'g': 6, 'h': 7}
-        letter = chess.square_name(space)  # returns letter of space (ex. a3)
-        return 8 - int(letter[1]), row_val[letter[0]]  # returns row, column
-
     def split_boards(self, board):
         """
         Splits board into 12 different boards
